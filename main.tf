@@ -21,7 +21,7 @@ resource "aws_ebs_volume" "gitlab" {
 }
 
 resource "aws_instance" "gitlab" {
-  ami             = "ami-4bf3d731"
+  ami             = "ami-02eac2c0129f6376b"
   instance_type   = "t2.medium"
   key_name        = "${var.aws_key_pair}"
   security_groups = ["${aws_security_group.ssh_sg.name}", "${aws_security_group.http_sg.name}", "${aws_security_group.https_sg.name}"]
@@ -29,4 +29,16 @@ resource "aws_instance" "gitlab" {
   tags = {
     Name = "gitlab_pov"
   }
+}
+
+data "aws_route53_zone" "domain" {
+  name = "${var.domain}"
+}
+
+resource "aws_route53_record" "gitlab" {
+  zone_id = "${data.aws_route53_zone.domain.zone_id}"
+  name    = "gitlab.pov.${var.domain}"
+  type    = "A"
+  ttl     = "300"
+  records = ["${aws_instance.gitlab.public_ip}"]
 }
