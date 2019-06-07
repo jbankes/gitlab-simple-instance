@@ -9,8 +9,6 @@ provider "aws" {
   region = "${var.aws_region}"
 }
 
-variable "aws_key_pair" {}
-
 resource "aws_ebs_volume" "gitlab" {
   availability_zone = "us-east-1a"
   size              = 30
@@ -28,6 +26,22 @@ resource "aws_instance" "gitlab" {
 
   tags = {
     Name = "gitlab_pov"
+  }
+
+  # remote-exec to wait for instance so Ansible doesn't kick off early
+  provisioner "remote-exec" {
+    inline = "echo 'instance is up'"
+  }
+
+  connection {
+    type        = "ssh"
+    user        = "centos"
+    private_key = "${file("${var.private_key}")}"
+  }
+
+  # run ansible playbook
+  provisioner "local-exec" {
+    command = "ansible-playbook -i ${aws_instance.gitlab.public_ip}, -u centos --key-file ${var.private_key} playbook/gitlab.yml -e gitlab_external_url=http://gitlab.pov.${var.domain}"
   }
 }
 

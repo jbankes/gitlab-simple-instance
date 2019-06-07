@@ -3,7 +3,7 @@
 # 
 
 resource "aws_security_group" "ssh_sg" {
-  name        = "toolchain_allow_ssh"
+  name        = "gitlab_allow_ssh"
   description = "All SSH traffic"
 
   tags {
@@ -28,7 +28,7 @@ resource "aws_security_group" "ssh_sg" {
 }
 
 resource "aws_security_group" "http_sg" {
-  name        = "toolchain_allow_http"
+  name        = "gitlab_allow_http"
   description = "All http traffic"
 
   tags {
@@ -45,7 +45,7 @@ resource "aws_security_group" "http_sg" {
 }
 
 resource "aws_security_group" "https_sg" {
-  name        = "toolchain_allow_https"
+  name        = "gitlab_allow_https"
   description = "All https traffic"
 
   tags {
