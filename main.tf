@@ -41,7 +41,7 @@ resource "aws_instance" "gitlab" {
 
   # run ansible playbook
   provisioner "local-exec" {
-    command = "ansible-playbook -i ${aws_instance.gitlab.public_ip}, -u centos --key-file ${var.private_key} playbook/gitlab.yml -e gitlab_external_url=http://gitlab.pov.${var.domain}"
+    command = "ansible-playbook -i ${aws_instance.gitlab.public_ip}, -u centos --key-file ${var.private_key} playbook/gitlab.yml -e gitlab_external_url=http://${var.subdomain}.${var.domain}"
   }
 }
 
@@ -51,7 +51,7 @@ data "aws_route53_zone" "domain" {
 
 resource "aws_route53_record" "gitlab" {
   zone_id = "${data.aws_route53_zone.domain.zone_id}"
-  name    = "gitlab.pov.${var.domain}"
+  name    = "${var.subdomain}.${var.domain}"
   type    = "A"
   ttl     = "300"
   records = ["${aws_instance.gitlab.public_ip}"]
