@@ -18,3 +18,8 @@ variable "private_key" {
 variable "domain" {
   description = "the domain to use for the hosted zone and access"
 }
+
+variable "subdomain" {
+  description = "subdomain for the URL"
+  default     = "gitlab.pov"
+}
